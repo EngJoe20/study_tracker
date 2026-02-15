@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ChapterController;
@@ -8,14 +9,21 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ThemeController;
 use Illuminate\Support\Facades\Route;
 
+// Public route
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth'])->group(function () {
-    
+// Auth-protected routes
+Route::middleware(['auth', 'verified'])->group(function () {
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Theme
     Route::post('/theme/update', [ThemeController::class, 'update'])->name('theme.update');
@@ -44,6 +52,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     Route::post('projects/{project}/progress', [ProjectController::class, 'updateProgress'])->name('projects.progress');
+
 });
 
+// REMOVE or comment this line to avoid errors:
 require __DIR__.'/auth.php';
