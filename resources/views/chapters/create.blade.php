@@ -1,20 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Chapter')
+@section('title', 'Add Chapter')
 
 @section('content')
 <div class="max-w-2xl mx-auto animate-slide-in">
     <div class="mb-6">
         <h1 class="text-4xl font-bold mb-2">
-            <i class="fas fa-edit mr-2"></i>
-            Edit Chapter
+            <i class="fas fa-book-medical mr-2"></i>
+            Add Chapter
         </h1>
-        <p class="opacity-75">Update chapter information</p>
+        <p class="opacity-75">Add a new chapter to <strong>{{ $subject->name }}</strong></p>
     </div>
 
-    <form action="{{ route('chapters.update', $chapter) }}" method="POST" class="card">
+    <form action="{{ route('chapters.store', $subject) }}" method="POST" class="card">
         @csrf
-        @method('PUT')
 
         <!-- Chapter Name -->
         <div class="mb-6">
@@ -28,7 +27,9 @@
                 name="name" 
                 required 
                 class="w-full bg-transparent border rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
-                value="{{ old('name', $chapter->name) }}"
+                placeholder="e.g., Binary Search Trees"
+                value="{{ old('name') }}"
+                autofocus
             >
         </div>
 
@@ -44,8 +45,10 @@
                 name="order" 
                 min="0"
                 class="w-full bg-transparent border rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
-                value="{{ old('order', $chapter->order) }}"
+                placeholder="e.g., 1, 2, 3..."
+                value="{{ old('order', $subject->chapters->count() + 1) }}"
             >
+            <p class="text-sm opacity-75 mt-1">The order in which this chapter appears</p>
         </div>
 
         <!-- Notes -->
@@ -59,32 +62,17 @@
                 name="notes" 
                 rows="4"
                 class="w-full bg-transparent border rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
-            >{{ old('notes', $chapter->notes) }}</textarea>
-        </div>
-
-        <!-- Progress Info (Read-only) -->
-        <div class="mb-6 p-4 bg-black bg-opacity-20 rounded-lg">
-            <h3 class="font-bold mb-3">Current Progress</h3>
-            <div class="flex justify-between items-center mb-2">
-                <span>Completion:</span>
-                <span class="font-bold">{{ number_format($chapter->completion_percentage, 1) }}%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill btn-primary" style="width: {{ $chapter->completion_percentage }}%"></div>
-            </div>
-            <p class="text-sm opacity-75 mt-2">
-                <i class="fas fa-info-circle mr-1"></i>
-                Progress is automatically calculated based on lecture coverage
-            </p>
+                placeholder="Any additional notes about this chapter..."
+            >{{ old('notes') }}</textarea>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex gap-4 pt-6 border-t" style="border-color: rgba(255, 255, 255, 0.1);">
             <button type="submit" class="btn btn-primary flex items-center">
-                <i class="fas fa-save mr-2"></i>
-                Save Changes
+                <i class="fas fa-check mr-2"></i>
+                Add Chapter
             </button>
-            <a href="{{ route('subjects.show', $chapter->subject_id) }}" class="btn border">
+            <a href="{{ route('subjects.show', $subject) }}" class="btn border">
                 <i class="fas fa-times mr-2"></i>
                 Cancel
             </a>

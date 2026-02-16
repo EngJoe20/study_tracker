@@ -1,19 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Create Subject')
+@section('title', 'Edit Subject')
 
 @section('content')
 <div class="max-w-3xl mx-auto animate-slide-in">
     <div class="mb-6">
         <h1 class="text-4xl font-bold mb-2">
-            <i class="fas fa-plus-circle mr-2"></i>
-            Create New Subject
+            <i class="fas fa-edit mr-2"></i>
+            Edit Subject
         </h1>
-        <p class="opacity-75">Add a new subject to start tracking your progress</p>
+        <p class="opacity-75">Update subject information and progress weights</p>
     </div>
 
-    <form action="{{ route('subjects.store') }}" method="POST" class="card">
+    <form action="{{ route('subjects.update', $subject) }}" method="POST" class="card">
         @csrf
+        @method('PUT')
 
         <!-- Subject Name -->
         <div class="mb-6">
@@ -28,19 +29,35 @@
                 required 
                 class="w-full bg-transparent border rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
                 placeholder="e.g., Data Structures & Algorithms"
-                value="{{ old('name') }}"
+                value="{{ old('name', $subject->name) }}"
             >
+        </div>
+
+        <!-- Status -->
+        <div class="mb-6">
+            <label for="status" class="block mb-2 font-bold text-lg">
+                <i class="fas fa-flag mr-2"></i>
+                Status
+            </label>
+            <select 
+                id="status" 
+                name="status" 
+                class="w-full bg-transparent border rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
+            >
+                <option value="active" {{ old('status', $subject->status) === 'active' ? 'selected' : '' }}>Active</option>
+                <option value="completed" {{ old('status', $subject->status) === 'completed' ? 'selected' : '' }}>Completed</option>
+                <option value="archived" {{ old('status', $subject->status) === 'archived' ? 'selected' : '' }}>Archived</option>
+            </select>
         </div>
 
         <!-- Progress Weights Section -->
         <div class="mb-6">
             <h3 class="font-bold mb-2 text-lg flex items-center">
                 <i class="fas fa-sliders-h mr-2"></i>
-                Progress Weights (Optional)
+                Progress Weights
             </h3>
             <p class="text-sm opacity-75 mb-4">
-                Define how much each component contributes to overall progress. 
-                Leave empty for defaults (40% chapters, 20% sections, 20% labs, 20% project)
+                Adjust how much each component contributes to overall progress
             </p>
             
             <div class="grid grid-cols-2 gap-4">
@@ -57,8 +74,8 @@
                         min="0" 
                         max="1"
                         class="w-full bg-transparent border rounded px-3 py-2"
-                        placeholder="0.40 (40%)"
-                        value="{{ old('chapters_weight') }}"
+                        placeholder="0.40"
+                        value="{{ old('chapters_weight', $subject->progress_weights['chapters'] ?? 0.40) }}"
                     >
                 </div>
 
@@ -75,8 +92,8 @@
                         min="0" 
                         max="1"
                         class="w-full bg-transparent border rounded px-3 py-2"
-                        placeholder="0.20 (20%)"
-                        value="{{ old('sections_weight') }}"
+                        placeholder="0.20"
+                        value="{{ old('sections_weight', $subject->progress_weights['sections'] ?? 0.20) }}"
                     >
                 </div>
 
@@ -93,8 +110,8 @@
                         min="0" 
                         max="1"
                         class="w-full bg-transparent border rounded px-3 py-2"
-                        placeholder="0.20 (20%)"
-                        value="{{ old('labs_weight') }}"
+                        placeholder="0.20"
+                        value="{{ old('labs_weight', $subject->progress_weights['labs'] ?? 0.20) }}"
                     >
                 </div>
 
@@ -111,8 +128,8 @@
                         min="0" 
                         max="1"
                         class="w-full bg-transparent border rounded px-3 py-2"
-                        placeholder="0.20 (20%)"
-                        value="{{ old('project_weight') }}"
+                        placeholder="0.20"
+                        value="{{ old('project_weight', $subject->progress_weights['project'] ?? 0.20) }}"
                     >
                 </div>
             </div>
@@ -121,10 +138,10 @@
         <!-- Action Buttons -->
         <div class="flex gap-4 pt-6 border-t" style="border-color: rgba(255, 255, 255, 0.1);">
             <button type="submit" class="btn btn-primary flex items-center">
-                <i class="fas fa-check mr-2"></i>
-                Create Subject
+                <i class="fas fa-save mr-2"></i>
+                Save Changes
             </button>
-            <a href="{{ route('subjects.index') }}" class="btn border">
+            <a href="{{ route('subjects.show', $subject) }}" class="btn border">
                 <i class="fas fa-times mr-2"></i>
                 Cancel
             </a>
